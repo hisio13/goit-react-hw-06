@@ -1,8 +1,9 @@
 import { Formik, Form, Field, ErrorMessage } from 'formik';
-import { nanoid } from 'nanoid';
 import * as Yup from 'yup';
-import { addContact } from '../../redux/contactsSlice';
+import { nanoid } from 'nanoid';
 import { useDispatch } from 'react-redux';
+import { addContact } from '../../redux/contactsSlice';
+import css from './ContactForm.module.css';
 
 const schema = Yup.object().shape({
   name: Yup.string().min(3, 'Too short!').max(50, 'Too long!').required('Required'),
@@ -11,29 +12,24 @@ const schema = Yup.object().shape({
 
 export default function ContactForm() {
   const dispatch = useDispatch();
-  
+
   const handleSubmit = (values, { resetForm }) => {
-    const newContact = { id: nanoid(), ...values };
-    dispatch(addContact(newContact));
+    dispatch(addContact({ id: nanoid(), ...values }));
     resetForm();
   };
 
   return (
-    <Formik
-      initialValues={{ name: '', number: '' }}
-      validationSchema={schema}
-      onSubmit={handleSubmit}
-    >
-      <Form>
+    <Formik initialValues={{ name: '', number: '' }} validationSchema={schema} onSubmit={handleSubmit}>
+      <Form className={css.form}>
         <label>
           Name
           <Field type="text" name="name" />
-          <ErrorMessage name="name" component="div" />
+          <ErrorMessage name="name" component="div" className={css.error} />
         </label>
         <label>
           Number
           <Field type="tel" name="number" />
-          <ErrorMessage name="number" component="div" />
+          <ErrorMessage name="number" component="div" className={css.error} />
         </label>
         <button type="submit">Add Contact</button>
       </Form>
